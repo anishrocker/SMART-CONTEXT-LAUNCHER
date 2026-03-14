@@ -11,49 +11,21 @@
       padding: 0 1rem;
       color: #202124;
     }
-    label {
-      display: block;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-      color: #5f6368;
-    }
-    input {
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid #dadce0;
-      border-radius: 8px;
-      font-size: 14px;
-      box-sizing: border-box;
-    }
-    input:focus {
-      outline: none;
-      border-color: #1a73e8;
-      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
-    }
-    p {
+    h1 { font-size: 1.25rem; }
+    p { font-size: 14px; color: #5f6368; line-height: 1.5; }
+    .kbd {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #f1f3f4;
+      font-family: monospace;
       font-size: 13px;
-      color: #5f6368;
-      margin-top: 0.5rem;
     }
-    button {
-      margin-top: 1rem;
-      padding: 0.5rem 1rem;
-      background: #1a73e8;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    button:hover { background: #1765cc; }
   </style>
 </head>
 <body>
   <h1>Smart Context Launcher</h1>
-  <label for="url">Command center URL</label>
-  <input type="url" id="url" placeholder="http://127.0.0.1:3000/launch">
-  <p>This page opens when you press ⌘K (Mac) or Ctrl+K (Windows/Linux). Use your local dev URL or your deployed app URL.</p>
-  <button id="save">Save</button>
-  <script src="options.js"></script>
+  <p>Press <span class="kbd">⌘K</span> (Mac) or <span class="kbd">Ctrl+K</span> (Windows/Linux) on any webpage to open the command center as a Spotlight-style overlay.</p>
+  <p>Type a command (e.g. <strong>gym</strong> or <strong>study</strong>), then Enter to launch the related apps in new tabs. Esc to close.</p>
 </body>
 </html>
