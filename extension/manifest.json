@@ -1,19 +1,33 @@
 {
   "manifest_version": 3,
   "name": "Smart Context Launcher",
-  "version": "1.0.0",
-  "description": "Open the command center from any website with ⌘K (Mac) or Ctrl+K (Windows/Linux).",
+  "version": "2.0.0",
+  "description": "Spotlight-style command center: ⌘K anywhere to search and launch workflows (gym, study, etc.).",
   "permissions": ["storage"],
+  "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
   },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["command-center.html", "command-center.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "commands": {
     "open-command-center": {
       "suggested_key": {
         "default": "Ctrl+K",
         "mac": "Command+K"
       },
-      "description": "Open Smart Context Launcher command center"
+      "description": "Open Spotlight-style command center"
     }
   },
   "options_ui": {
