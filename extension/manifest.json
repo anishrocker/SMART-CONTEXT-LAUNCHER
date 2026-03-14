@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Smart Context Launcher",
+  "version": "1.0.0",
+  "description": "Open the command center from any website with ⌘K (Mac) or Ctrl+K (Windows/Linux).",
+  "permissions": ["storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "open-command-center": {
+      "suggested_key": {
+        "default": "Ctrl+K",
+        "mac": "Command+K"
+      },
+      "description": "Open Smart Context Launcher command center"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  }
+}
