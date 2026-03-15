@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Smart Context Launcher",
   "version": "2.0.0",
-  "description": "Spotlight-style command center: ⌘K anywhere to search and launch workflows (gym, study, etc.).",
+  "description": "Spotlight-style command center: ⌘K to launch contexts. Save & restore tab bundles.",
   "permissions": ["storage"],
   "host_permissions": ["<all_urls>"],
   "background": {
@@ -17,7 +17,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["command-center.html", "command-center.js", "commands-data.js"],
+      "resources": ["src/command-center/index.html", "src/options/index.html", "assets/*"],
       "matches": ["<all_urls>"]
     }
   ],
@@ -27,11 +27,11 @@
         "default": "Ctrl+K",
         "mac": "Command+K"
       },
-      "description": "Open Spotlight-style command center"
+      "description": "Open command center"
     }
   },
   "options_ui": {
-    "page": "options.html",
+    "page": "src/options/index.html",
     "open_in_tab": false
   }
 }

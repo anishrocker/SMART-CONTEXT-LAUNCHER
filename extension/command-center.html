@@ -101,6 +101,20 @@
       color: rgba(0, 0, 0, 0.45);
       margin-top: 2px;
     }
+    .result-item {
+      position: relative;
+    }
+    .result-item .edit-urls {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      color: #1a73e8;
+      text-decoration: none;
+      opacity: 0.7;
+    }
+    .result-item .edit-urls:hover { opacity: 1; }
     .empty-state {
       padding: 24px 16px;
       text-align: center;
@@ -113,6 +127,16 @@
       color: rgba(0, 0, 0, 0.4);
       border-top: 1px solid rgba(0, 0, 0, 0.06);
     }
+    .category-header {
+      padding: 8px 16px 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.03);
+    }
+    .category-header:first-child { padding-top: 12px; }
   </style>
 </head>
 <body>
@@ -125,11 +149,12 @@
           <path d="m21 21-4.35-4.35"/>
         </svg>
       </span>
-      <input type="text" class="search-input" id="search" placeholder="Search commands…" autocomplete="off" autofocus>
+      <input type="text" class="search-input" id="search" placeholder="Search commands…" autocomplete="off">
     </div>
     <div class="results" id="results"></div>
     <div class="hint" id="hint">↑↓ to move · Enter to launch · Esc to close</div>
   </div>
+  <script src="commands-data.js"></script>
   <script src="command-center.js"></script>
 </body>
 </html>

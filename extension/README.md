@@ -20,3 +20,12 @@ Press **⌘K** (Mac) or **Ctrl+K** (Windows/Linux) on **any webpage** to open a 
 - **Close:** **Esc** or click outside (when implemented).
 
 On restricted pages (e.g. `chrome://`) where the overlay can’t run, the shortcut opens the command center in a new tab instead.
+
+## Edit URLs for commands
+
+You can change which links open for each command (add, edit, or remove URLs):
+
+1. **From the command center:** Click **Edit** next to any result to open the options page for that command.
+2. **From the extension:** Right-click the extension icon → **Options**, or go to `chrome://extensions` → Smart Context Launcher → **Extension options**.
+
+In the options page, expand a command to see its URLs. Use **+ Add URL**, edit or **Remove** each row, or **Reset to default**. Click **Save all changes** to store your custom URLs (they sync across your Chrome profile).
