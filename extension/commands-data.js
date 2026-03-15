@@ -159,4 +159,39 @@ window.SMART_CONTEXT_LAUNCHER_COMMANDS = [
   { category: 'Development', command: 'analysis', label: 'Analysis', summary: 'Sheets, Data, Docs', urls: [{ url: 'https://sheets.google.com' }, { url: 'https://docs.google.com' }, { url: 'https://notion.so' }] },
   { category: 'Development', command: 'debugging', label: 'Debugging', summary: 'Stack Overflow, DevTools docs, GitHub', urls: [{ url: 'https://stackoverflow.com' }, { url: 'https://developer.chrome.com/docs/devtools' }, { url: 'https://github.com' }] },
   { category: 'Development', command: 'review', label: 'Code review', summary: 'GitHub PRs, Diff, Notes', urls: [{ url: 'https://github.com/pulls' }, { url: 'https://github.com' }, { url: 'https://keep.google.com' }] },
+  // More Health & Fitness
+  { category: 'Health & Fitness', command: 'cycling', label: 'Cycling', summary: 'Strava, Map, Spotify', urls: [{ url: 'https://www.strava.com' }, { url: 'https://www.google.com/maps' }, { url: 'https://open.spotify.com' }] },
+  { category: 'Health & Fitness', command: 'swim', label: 'Swim', summary: 'Strava, Timer, Music', urls: [{ url: 'https://www.strava.com' }, { url: 'https://timer-tab.com' }, { url: 'https://open.spotify.com' }] },
+  { category: 'Health & Fitness', command: 'hike', label: 'Hike', summary: 'AllTrails, Maps, Weather', urls: [{ url: 'https://www.alltrails.com' }, { url: 'https://www.google.com/maps' }, { url: 'https://www.google.com/search?q=weather' }] },
+  { category: 'Health & Fitness', command: 'pilates', label: 'Pilates', summary: 'YouTube Pilates, Timer, Calm', urls: [{ url: 'https://www.youtube.com/results?search_query=pilates' }, { url: 'https://timer-tab.com' }, { url: 'https://www.calm.com' }] },
+  { category: 'Health & Fitness', command: 'boxing', label: 'Boxing', summary: 'YouTube Boxing, Timer, Spotify', urls: [{ url: 'https://www.youtube.com/results?search_query=boxing+workout' }, { url: 'https://timer-tab.com' }, { url: 'https://open.spotify.com' }] },
+  // More Creative
+  { category: 'Creative', command: 'podcast', label: 'Podcast', summary: 'Spotify, YouTube, Overcast', urls: [{ url: 'https://open.spotify.com' }, { url: 'https://www.youtube.com' }, { url: 'https://overcast.fm' }] },
+  { category: 'Creative', command: 'video edit', label: 'Video edit', summary: 'CapCut, Canva, YouTube Studio', urls: [{ url: 'https://www.capcut.com' }, { url: 'https://canva.com' }, { url: 'https://studio.youtube.com' }] },
+  { category: 'Creative', command: 'photo', label: 'Photo', summary: 'Photos, Lightroom, Unsplash', urls: [{ url: 'https://photos.google.com' }, { url: 'https://lightroom.adobe.com' }, { url: 'https://unsplash.com' }] },
+  { category: 'Creative', command: 'collaborate', label: 'Collaborate', summary: 'Miro, Figma, Docs', urls: [{ url: 'https://miro.com' }, { url: 'https://figma.com' }, { url: 'https://docs.google.com' }] },
+  // More Relax & Entertainment
+  { category: 'Relax & Entertainment', command: 'audiobook', label: 'Audiobook', summary: 'Audible, Spotify, YouTube', urls: [{ url: 'https://www.audible.com' }, { url: 'https://open.spotify.com' }, { url: 'https://www.youtube.com' }] },
+  { category: 'Relax & Entertainment', command: 'comedy', label: 'Comedy', summary: 'YouTube, Netflix, Spotify', urls: [{ url: 'https://www.youtube.com/results?search_query=comedy' }, { url: 'https://www.netflix.com' }, { url: 'https://open.spotify.com' }] },
+  { category: 'Relax & Entertainment', command: 'sports', label: 'Sports', summary: 'ESPN, YouTube Sports, News', urls: [{ url: 'https://www.espn.com' }, { url: 'https://www.youtube.com/results?search_query=sports' }, { url: 'https://www.google.com/search?q=sports+news' }] },
+  // More Daily Routine
+  { category: 'Daily Routine', command: 'lunch', label: 'Lunch break', summary: 'YouTube, Spotify, News', urls: [{ url: 'https://www.youtube.com' }, { url: 'https://open.spotify.com' }, { url: 'https://www.google.com/news' }] },
+  { category: 'Daily Routine', command: 'afternoon', label: 'Afternoon', summary: 'Calendar, Tasks, Notion', urls: [{ url: 'https://calendar.google.com' }, { url: 'https://tasks.google.com' }, { url: 'https://notion.so' }] },
+  { category: 'Daily Routine', command: 'weekly review', label: 'Weekly review', summary: 'Calendar, Tasks, Notion', urls: [{ url: 'https://calendar.google.com' }, { url: 'https://tasks.google.com' }, { url: 'https://notion.so' }] },
+  // More Study
+  { category: 'Study', command: 'coursera', label: 'Coursera', summary: 'Coursera, Notes, Calendar', urls: [{ url: 'https://www.coursera.org' }, { url: 'https://keep.google.com' }, { url: 'https://calendar.google.com' }] },
+  { category: 'Study', command: 'udemy', label: 'Udemy', summary: 'Udemy, Notes, Timer', urls: [{ url: 'https://www.udemy.com' }, { url: 'https://keep.google.com' }, { url: 'https://timer-tab.com' }] },
+  { category: 'Study', command: 'edx', label: 'edX', summary: 'edX, Notes, Scholar', urls: [{ url: 'https://www.edx.org' }, { url: 'https://keep.google.com' }, { url: 'https://scholar.google.com' }] },
+  { category: 'Study', command: 'duolingo', label: 'Language', summary: 'Duolingo, YouTube, Notes', urls: [{ url: 'https://www.duolingo.com' }, { url: 'https://www.youtube.com/results?search_query=language+learning' }, { url: 'https://keep.google.com' }] },
+  { category: 'Study', command: 'language', label: 'Language learning', summary: 'Duolingo, YouTube, Notes', urls: [{ url: 'https://www.duolingo.com' }, { url: 'https://www.youtube.com' }, { url: 'https://keep.google.com' }] },
+  // More Work
+  { category: 'Work', command: 'slack', label: 'Slack', summary: 'Slack, Email, Calendar', urls: [{ url: 'https://slack.com' }, { url: 'https://mail.google.com' }, { url: 'https://calendar.google.com' }] },
+  { category: 'Work', command: 'asana', label: 'Asana', summary: 'Asana, Calendar, Email', urls: [{ url: 'https://app.asana.com' }, { url: 'https://calendar.google.com' }, { url: 'https://mail.google.com' }] },
+  { category: 'Work', command: 'email', label: 'Email', summary: 'Gmail, Calendar, Tasks', urls: [{ url: 'https://mail.google.com' }, { url: 'https://calendar.google.com' }, { url: 'https://tasks.google.com' }] },
+  { category: 'Work', command: '1:1', label: '1:1 meeting', summary: 'Calendar, Meet, Notes', urls: [{ url: 'https://calendar.google.com' }, { url: 'https://meet.google.com' }, { url: 'https://keep.google.com' }] },
+  // More Development
+  { category: 'Development', command: 'npm', label: 'npm', summary: 'npm, GitHub, DevDocs', urls: [{ url: 'https://www.npmjs.com' }, { url: 'https://github.com' }, { url: 'https://devdocs.io' }] },
+  { category: 'Development', command: 'api', label: 'API docs', summary: 'DevDocs, MDN, Postman', urls: [{ url: 'https://devdocs.io' }, { url: 'https://developer.mozilla.org' }, { url: 'https://www.postman.com' }] },
+  { category: 'Development', command: 'testing', label: 'Testing', summary: 'Jest, Cypress, MDN', urls: [{ url: 'https://jestjs.io' }, { url: 'https://www.cypress.io' }, { url: 'https://developer.mozilla.org' }] },
+  { category: 'Development', command: 'deploy', label: 'Deploy', summary: 'Vercel, GitHub, Netlify', urls: [{ url: 'https://vercel.com' }, { url: 'https://github.com' }, { url: 'https://www.netlify.com' }] },
 ];

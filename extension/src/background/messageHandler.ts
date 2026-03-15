@@ -6,9 +6,9 @@
 import { MSG } from '@shared/messages';
 import type { GetContextsResponse } from '@shared/messages';
 import { CONTEXTS, WORKFLOWS } from './contexts';
-import { getContextForUrls } from './detector';
+import { getBestContextMatch } from './detector';
 import { runWorkflow } from './executor';
-import { getActiveWindowTabs, saveCurrentTabsAsBundle, restoreBundle } from './sessionManager';
+import { getOpenChromeTabs, saveCurrentTabsAsBundle, restoreBundle } from './sessionManager';
 import { getTabBundles } from '@shared/storage';
 import { getSettings, setSettings } from '@shared/storage';
 
@@ -37,13 +37,77 @@ export function handleMessage(
     }
 
     case MSG.GET_SUGGESTED_CONTEXT: {
-      getActiveWindowTabs()
-        .then((tabs) => {
-          const urls = tabs.map((t) => t.url).filter(Boolean);
-          const ctx = getContextForUrls(urls, CONTEXTS);
-          sendResponse({ contextId: ctx?.id ?? null, contextName: ctx?.name ?? null });
+      Promise.all([getSettings(), getOpenChromeTabs()])
+        .then(([settings, tabs]) => {
+          console.debug('[Smart Context Launcher][background] getSuggestedContext requested', {
+            suggestContextEnabled: settings.suggestContext,
+            tabCount: tabs.length,
+            tabs: tabs.map((tab) => ({
+              id: tab.id ?? null,
+              title: tab.title ?? null,
+              url: tab.url ?? null,
+            })),
+          });
+
+          if (!settings.suggestContext) {
+            console.debug('[Smart Context Launcher][background] suggestion skipped because settings.suggestContext=false');
+            sendResponse({ contextId: null, contextName: null, confidence: 'none', matchedTabs: [], reason: null });
+            return;
+          }
+
+          const urls = tabs.map((tab) => tab.url).filter((url): url is string => Boolean(url));
+          const match = getBestContextMatch(urls, CONTEXTS);
+
+          if (!match) {
+            console.debug('[Smart Context Launcher][background] no suggested context match found');
+            sendResponse({ contextId: null, contextName: null, confidence: 'none', matchedTabs: [], reason: null });
+            return;
+          }
+
+          const matchedTabs = tabs
+            .filter((tab): tab is chrome.tabs.Tab & { id: number; url: string } => tab.id != null && typeof tab.url === 'string' && match.matchedUrls.includes(tab.url))
+            .map((tab) => {
+              let host: string | null = null;
+              try {
+                host = new URL(tab.url).hostname.replace(/^www\./, '');
+              } catch {
+                host = null;
+              }
+
+              return {
+                tabId: tab.id,
+                title: tab.title ?? null,
+                url: tab.url,
+                host,
+              };
+            });
+
+          const hostList = Array.from(new Set(matchedTabs.map((tab) => tab.host).filter(Boolean)));
+          const reason =
+            hostList.length > 0
+              ? `Detected from ${matchedTabs.length} open tab${matchedTabs.length === 1 ? '' : 's'} on ${hostList.join(', ')}.`
+              : `Detected from ${matchedTabs.length} open tab${matchedTabs.length === 1 ? '' : 's'}.`;
+
+          console.debug('[Smart Context Launcher][background] suggested context resolved', {
+            contextId: match.context.id,
+            contextName: match.context.name,
+            confidence: match.confidence,
+            matchedTabs,
+            reason,
+          });
+
+          sendResponse({
+            contextId: match.context.id,
+            contextName: match.context.name,
+            confidence: match.confidence,
+            matchedTabs,
+            reason,
+          });
         })
-        .catch(() => sendResponse({ contextId: null, contextName: null }));
+        .catch((error) => {
+          console.error('[Smart Context Launcher][background] failed to compute suggested context', error);
+          sendResponse({ contextId: null, contextName: null, confidence: 'none', matchedTabs: [], reason: null });
+        });
       return true;
     }
 

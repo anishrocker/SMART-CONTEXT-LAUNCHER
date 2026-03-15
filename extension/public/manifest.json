@@ -3,7 +3,7 @@
   "name": "Smart Context Launcher",
   "version": "2.0.0",
   "description": "Spotlight-style command center: ⌘K to launch contexts. Save & restore tab bundles.",
-  "permissions": ["storage"],
+  "permissions": ["storage", "tabs", "scripting"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"

@@ -57,7 +57,8 @@
     }
 
     function onMessage(e) {
-      if (e.source !== document.getElementById('smart-context-launcher-frame').contentWindow) return;
+      const frame = document.getElementById('smart-context-launcher-frame');
+      if (!frame || e.source !== frame.contentWindow) return;
       if (e.data && e.data.type === 'SMART_CONTEXT_LAUNCHER_CLOSE') close();
     }
 

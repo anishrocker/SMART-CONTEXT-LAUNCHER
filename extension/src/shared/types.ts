@@ -83,6 +83,13 @@ export interface InferredState {
   tabIds: number[];
 }
 
+export interface SuggestedTabMatch {
+  tabId: number;
+  title: string | null;
+  url: string;
+  host: string | null;
+}
+
 // ---------------------------------------------------------------------------
 // Settings (storage)
 // ---------------------------------------------------------------------------

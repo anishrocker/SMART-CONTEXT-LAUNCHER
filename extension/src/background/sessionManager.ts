@@ -6,14 +6,20 @@
 import type { Session, SessionTab } from '@shared/types';
 import { getTabBundles, setTabBundles } from '@shared/storage';
 
-// TODO: implement getActiveWindowTabs(): Promise<SessionTab[]>
-// - chrome.tabs.query({ currentWindow: true })
-// - Return { url, title } for each tab (exclude extension pages if desired)
+function isInspectableUrl(url?: string): url is string {
+  return Boolean(url && /^https?:\/\//.test(url));
+}
+
+export async function getOpenChromeTabs(): Promise<chrome.tabs.Tab[]> {
+  const tabs = await chrome.tabs.query({});
+  return tabs.filter((tab) => isInspectableUrl(tab.url));
+}
 
 export async function getActiveWindowTabs(): Promise<SessionTab[]> {
-  // TODO: implement
   const tabs = await chrome.tabs.query({ currentWindow: true });
-  return tabs.map((t) => ({ url: t.url ?? '', title: t.title }));
+  return tabs
+    .filter((tab) => isInspectableUrl(tab.url))
+    .map((tab) => ({ url: tab.url ?? '', title: tab.title }));
 }
 
 // TODO: implement saveCurrentTabsAsBundle(name: string): Promise<string>
