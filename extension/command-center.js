@@ -1,5 +1,8 @@
 (function () {
   const CATEGORY_ORDER = [
+    'Favorites',
+    'Resume',
+    'Personal',
     'Health & Fitness',
     'Creative',
     'Relax & Entertainment',
@@ -7,10 +10,10 @@
     'Study',
     'Work',
     'Development',
-    'Personal',
   ];
 
   let launchFlows = [];
+  let favoriteCommandKeys = [];
 
   const searchEl = document.getElementById('search');
   const resultsEl = document.getElementById('results');
@@ -44,54 +47,104 @@
   function groupMatchesByCategory() {
     const byCat = {};
     const catOrder = [];
+    const favFlows = matches.filter(function (f) {
+      return !f.isResume && favoriteCommandKeys.indexOf(f.command) >= 0;
+    });
+    if (favFlows.length > 0) {
+      byCat['Favorites'] = favFlows.map(function (flow) {
+        return { flow: flow, index: matches.indexOf(flow) };
+      });
+      catOrder.push('Favorites');
+    }
     for (let i = 0; i < matches.length; i++) {
       const c = matches[i].category;
+      if (c === 'Favorites') continue;
       if (!byCat[c]) { byCat[c] = []; catOrder.push(c); }
       byCat[c].push({ flow: matches[i], index: i });
     }
-    return { byCat, catOrder };
+    var visibleItems = [];
+    var seen = {};
+    if (byCat['Favorites']) {
+      byCat['Favorites'].forEach(function (item) {
+        visibleItems.push(item);
+        seen[item.flow.command] = true;
+      });
+    }
+    catOrder.forEach(function (cat) {
+      if (cat === 'Favorites') return;
+      (byCat[cat] || []).forEach(function (item) {
+        if (!seen[item.flow.command]) {
+          visibleItems.push(item);
+          seen[item.flow.command] = true;
+        }
+      });
+    });
+    return { byCat, catOrder, visibleItems: visibleItems };
   }
 
   function render() {
     matches = getMatches(searchEl.value);
+    const grouped = groupMatchesByCategory();
+    const visibleItems = grouped.visibleItems;
     selectedIndex = 0;
-    if (matches.length > 0) selectedIndex = 0;
+    if (visibleItems.length > 0) selectedIndex = 0;
 
-    if (matches.length === 0) {
+    if (visibleItems.length === 0) {
       resultsEl.innerHTML = '<div class="empty-state">' +
-        (searchEl.value.trim() ? `No results for “${ escapeHtml(searchEl.value.trim()) }”` : 'Type to search (e.g. gym, focus, coding, meeting)') +
+        (searchEl.value.trim() ? 'No results for "' + escapeHtml(searchEl.value.trim()) + '"' : 'Type to search (e.g. gym, focus, coding, meeting)') +
         '</div>';
       return;
     }
 
-    const { byCat, catOrder } = groupMatchesByCategory();
+    const { byCat, catOrder } = grouped;
     let html = '';
     for (const cat of catOrder) {
       html += '<div class="category-header">' + escapeHtml(cat) + '</div>';
       for (const item of byCat[cat]) {
-        const index = item.index;
         const flow = item.flow;
-        const editUrl = typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL
+        const visibleIndex = visibleItems.indexOf(item);
+        const isSelected = visibleIndex === selectedIndex;
+        const isResume = flow.isResume === true;
+        const isFav = !isResume && favoriteCommandKeys.indexOf(flow.command) >= 0;
+        const editUrl = !isResume && typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL
           ? chrome.runtime.getURL('options.html?command=' + encodeURIComponent(flow.command))
           : '#';
-        html += '<div class="result-item ' + (index === selectedIndex ? 'selected' : '') + '" data-index="' + index + '">' +
+        const starTitle = isFav ? 'Remove from favorites' : 'Add to favorites';
+        const starChar = isFav ? '★' : '☆';
+        html += '<div class="result-item ' + (isSelected ? 'selected' : '') + '" data-index="' + visibleIndex + '">' +
+          (isResume ? '' : '<button type="button" class="star-fav" data-command="' + escapeHtml(flow.command) + '" title="' + escapeHtml(starTitle) + '" aria-label="' + escapeHtml(starTitle) + '">' + starChar + '</button>') +
           '<span class="command">' + escapeHtml(flow.command) + '</span>' +
           '<span class="label">— ' + escapeHtml(flow.label) + '</span>' +
           '<span class="summary">' + escapeHtml(flow.summary) + '</span>' +
-          '<a href="' + editUrl + '" target="_blank" class="edit-urls" title="Edit URLs">Edit</a></div>';
+          (isResume ? '' : '<a href="' + editUrl + '" target="_blank" class="edit-urls" title="Edit URLs">Edit</a>') +
+          '</div>';
       }
     }
     resultsEl.innerHTML = html;
 
     resultsEl.querySelectorAll('.result-item').forEach((el) => {
       el.addEventListener('click', (e) => {
-        if (e.target.classList.contains('edit-urls')) return;
-        launch(matches[Number(el.dataset.index)]);
+        if (e.target.classList.contains('edit-urls') || e.target.classList.contains('star-fav')) return;
+        var idx = Number(el.dataset.index);
+        if (visibleItems[idx]) launch(visibleItems[idx].flow);
       });
       el.querySelectorAll('.edit-urls').forEach((a) => {
         a.addEventListener('click', (e) => e.stopPropagation());
       });
-      el.addEventListener('mouseenter', () => {
+      el.querySelectorAll('.star-fav').forEach((btn) => {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var cmd = btn.getAttribute('data-command');
+          if (!cmd) return;
+          if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+            chrome.runtime.sendMessage({ action: 'TOGGLE_FAVORITE', commandKey: cmd }, function (res) {
+              if (res && res.commandKeys) { favoriteCommandKeys = res.commandKeys; render(); }
+            });
+          }
+        });
+      });
+      el.addEventListener('mouseenter', function () {
         selectedIndex = Number(el.dataset.index);
         updateSelection();
       });
@@ -113,7 +166,20 @@
   }
 
   function launch(flow) {
-    flow.urls.forEach(({ url }) => window.open(url, '_blank', 'noopener,noreferrer'));
+    if (flow.isResume && flow.contextKey) {
+      chrome.runtime.sendMessage({ action: 'RESTORE_CONTEXT_TABS', contextKey: flow.contextKey }, function () {
+        postClose();
+      });
+      return;
+    }
+    var urls = flow.urls || [];
+    urls.forEach(function (u) {
+      window.open(typeof u === 'string' ? u : u.url, '_blank', 'noopener,noreferrer');
+    });
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage && flow.command) {
+      var urlStrings = urls.map(function (u) { return typeof u === 'string' ? u : u.url; });
+      chrome.runtime.sendMessage({ action: 'SAVE_CONTEXT_TABS', contextKey: flow.command, urls: urlStrings });
+    }
     try {
       if (window.opener) window.opener.postMessage({ type: 'SMART_CONTEXT_LAUNCHER_CLOSE' }, '*');
     } catch (_) {}
@@ -128,21 +194,22 @@
 
   searchEl.addEventListener('input', render);
   searchEl.addEventListener('keydown', (e) => {
+    var visibleItems = groupMatchesByCategory().visibleItems;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      if (matches.length) selectedIndex = (selectedIndex + 1) % matches.length;
+      if (visibleItems.length) selectedIndex = (selectedIndex + 1) % visibleItems.length;
       updateSelection();
       return;
     }
     if (e.key === 'ArrowUp') {
       e.preventDefault();
-      if (matches.length) selectedIndex = (selectedIndex - 1 + matches.length) % matches.length;
+      if (visibleItems.length) selectedIndex = (selectedIndex - 1 + visibleItems.length) % visibleItems.length;
       updateSelection();
       return;
     }
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (matches[selectedIndex]) launch(matches[selectedIndex]);
+      if (visibleItems[selectedIndex]) launch(visibleItems[selectedIndex].flow);
       return;
     }
     if (e.key === 'Escape') {
@@ -161,6 +228,47 @@
       searchEl.focus();
       return;
     }
+    function finishInit() {
+      function addResumeAndRender() {
+        if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+          chrome.runtime.sendMessage({ action: 'GET_CONTEXTS_WITH_SAVED_TABS' }, function (res) {
+            if (chrome.runtime.lastError) {
+              render();
+              searchEl.focus();
+              return;
+            }
+            var keys = (res && res.contextKeys) ? res.contextKeys : [];
+            keys.forEach(function (contextKey) {
+              launchFlows.unshift({
+                category: 'Resume',
+                command: 'resume ' + contextKey,
+                label: 'Resume ' + contextKey,
+                summary: 'Restore tabs from last session',
+                isResume: true,
+                contextKey: contextKey,
+                urls: [],
+              });
+            });
+            render();
+            searchEl.focus();
+          });
+        } else {
+          render();
+          searchEl.focus();
+        }
+      }
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+        chrome.runtime.sendMessage({ action: 'GET_FAVORITES' }, function (res) {
+          if (!chrome.runtime.lastError && res && res.commandKeys) {
+            favoriteCommandKeys = res.commandKeys;
+          }
+          addResumeAndRender();
+        });
+      } else {
+        addResumeAndRender();
+      }
+    }
+
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
       chrome.storage.sync.get(['urlOverrides', 'customCommands'], (data) => {
         const overrides = data.urlOverrides || {};
@@ -178,13 +286,11 @@
             urls: c.urls && c.urls.length ? c.urls : [{ url: 'about:blank' }],
           });
         });
-        render();
-        searchEl.focus();
+        finishInit();
       });
     } else {
       launchFlows = defaults.map((f) => ({ ...f }));
-      render();
-      searchEl.focus();
+      finishInit();
     }
   }
   if (document.readyState === 'loading') {

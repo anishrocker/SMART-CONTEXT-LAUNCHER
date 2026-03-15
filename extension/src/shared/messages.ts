@@ -3,7 +3,7 @@
  * Background handles all messages; UI (command-center, options) sends requests.
  */
 
-import type { Context, Workflow, Session, Settings } from './types';
+import type { Confidence, Context, Session, Settings, SuggestedTabMatch, Workflow } from './types';
 
 // ---------------------------------------------------------------------------
 // Action names (must match background messageHandler)
@@ -42,6 +42,9 @@ export interface RunWorkflowResponse {
 export interface GetSuggestedContextResponse {
   contextId: string | null;
   contextName: string | null;
+  confidence: Confidence;
+  matchedTabs: SuggestedTabMatch[];
+  reason: string | null;
 }
 
 export interface SaveCurrentTabsRequest {
