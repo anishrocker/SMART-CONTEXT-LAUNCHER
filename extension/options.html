@@ -2,30 +2,148 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Smart Context Launcher – Options</title>
+  <title>Smart Context Launcher – Edit URLs</title>
   <style>
+    * { box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      max-width: 480px;
-      margin: 2rem auto;
-      padding: 0 1rem;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 24px 20px;
+      color: #202124;
+      background: #f8f9fa;
+    }
+    h1 { font-size: 1.35rem; margin: 0 0 8px; }
+    .intro { font-size: 14px; color: #5f6368; margin-bottom: 20px; }
+    .command-block {
+      background: #fff;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .command-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .command-head:hover { background: #f1f3f4; }
+    .command-name { font-weight: 600; }
+    .command-cat { font-size: 12px; color: #5f6368; margin-left: 8px; }
+    .command-body { padding: 0 14px 14px; border-top: 1px solid #eee; }
+    .url-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .url-row input {
+      flex: 1;
+      padding: 8px 10px;
+      border: 1px solid #dadce0;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .url-row input:focus {
+      outline: none;
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 2px rgba(26,115,232,0.2);
+    }
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      background: #e8eaed;
       color: #202124;
     }
-    h1 { font-size: 1.25rem; }
-    p { font-size: 14px; color: #5f6368; line-height: 1.5; }
-    .kbd {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
-      background: #f1f3f4;
-      font-family: monospace;
-      font-size: 13px;
+    .btn:hover { background: #dadce0; }
+    .btn-danger { background: #fce8e6; color: #c5221f; }
+    .btn-danger:hover { background: #f5c6c4; }
+    .btn-primary { background: #1a73e8; color: #fff; }
+    .btn-primary:hover { background: #1765cc; }
+    .add-url { margin-top: 10px; }
+    .save-bar {
+      position: sticky;
+      bottom: 0;
+      background: #fff;
+      padding: 14px 0;
+      margin: 20px -20px -24px -20px;
+      padding: 14px 20px;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
+    .save-msg { font-size: 13px; color: #1e8e3e; }
+    .hidden { display: none; }
+    .back-bar { margin-bottom: 16px; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: #1a73e8;
+      text-decoration: none;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .personal-section { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid #e8eaed; }
+    .section-title { font-size: 1.1rem; margin: 0 0 6px; }
+    .section-intro { font-size: 13px; color: #5f6368; margin-bottom: 12px; }
+    .personal-form { background: #fff; padding: 14px; border-radius: 10px; margin-top: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .form-row { margin-bottom: 12px; }
+    .form-row label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+    .form-row input, .form-row textarea { width: 100%; padding: 8px 10px; border: 1px solid #dadce0; border-radius: 6px; font-size: 14px; }
+    .form-row textarea { resize: vertical; min-height: 60px; }
+    .muted { font-weight: normal; color: #5f6368; }
+    .form-actions { margin-top: 12px; display: flex; gap: 8px; }
+    #personal-list .command-block { margin-top: 10px; }
+    .delete-cmd { margin-left: auto; }
   </style>
 </head>
 <body>
-  <h1>Smart Context Launcher</h1>
-  <p>Press <span class="kbd">⌘K</span> (Mac) or <span class="kbd">Ctrl+K</span> (Windows/Linux) on any webpage to open the command center as a Spotlight-style overlay.</p>
-  <p>Type a command (e.g. <strong>gym</strong> or <strong>study</strong>), then Enter to launch the related apps in new tabs. Esc to close.</p>
+  <div class="back-bar">
+    <a href="#" id="back-to-command-center" class="back-link">← Go back to command center</a>
+  </div>
+  <h1>Edit command URLs</h1>
+  <p class="intro">Change which links open for each command. Add, edit, or remove URLs. Click Save to store changes.</p>
+
+  <section class="personal-section">
+    <h2 class="section-title">Personal commands</h2>
+    <p class="section-intro">Create your own triggers and URLs. They appear under "Personal" in the command center.</p>
+    <button type="button" class="btn btn-primary" id="add-personal-cmd">+ Add personal command</button>
+    <div id="personal-form" class="personal-form hidden">
+      <div class="form-row">
+        <label>Trigger word(s) <span class="muted">(what you type, e.g. mywork)</span></label>
+        <input type="text" id="new-command" placeholder="e.g. mywork" />
+      </div>
+      <div class="form-row">
+        <label>Label <span class="muted">(optional)</span></label>
+        <input type="text" id="new-label" placeholder="e.g. My work stack" />
+      </div>
+      <div class="form-row">
+        <label>URLs <span class="muted">(one per line or comma-separated)</span></label>
+        <textarea id="new-urls" rows="3" placeholder="https://mail.google.com&#10;https://calendar.google.com"></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-primary" id="save-personal-cmd">Add command</button>
+        <button type="button" class="btn" id="cancel-personal-cmd">Cancel</button>
+      </div>
+    </div>
+    <div id="personal-list"></div>
+  </section>
+
+  <h2 class="section-title">Built-in commands</h2>
+  <div id="command-list"></div>
+  <div class="save-bar">
+    <span class="save-msg hidden" id="save-msg">Saved.</span>
+    <button type="button" class="btn btn-primary" id="save-btn">Save all changes</button>
+  </div>
+  <script src="commands-data.js"></script>
+  <script src="options.js"></script>
 </body>
 </html>
