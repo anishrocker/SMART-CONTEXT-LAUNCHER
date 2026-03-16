@@ -22,9 +22,9 @@
       #smart-context-launcher-backdrop {
         position: absolute;
         inset: 0;
-        background: rgba(0, 0, 0, 0.35);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
       }
       #smart-context-launcher-frame {
         position: absolute;

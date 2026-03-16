@@ -8,7 +8,7 @@ function injectSpotlightOnPage(iframeUrl) {
   var style = document.createElement('style');
   style.textContent =
     '#smart-context-launcher-root{position:fixed;inset:0;z-index:2147483647;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}' +
-    '#smart-context-launcher-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}' +
+    '#smart-context-launcher-backdrop{position:absolute;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}' +
     '#smart-context-launcher-frame{position:absolute;inset:0;border:none;width:100%;height:100%;background:transparent}';
   document.documentElement.appendChild(style);
   document.body.appendChild(root);

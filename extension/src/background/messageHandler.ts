@@ -69,7 +69,7 @@ export function handleMessage(
             .map((tab) => {
               let host: string | null = null;
               try {
-                host = new URL(tab.url).hostname.replace(/^www\./, '');
+                host = new URL(tab.url).hostname.replace(/^www\./, '').toLowerCase();
               } catch {
                 host = null;
               }

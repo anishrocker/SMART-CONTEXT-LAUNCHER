@@ -17,8 +17,40 @@
 
   const searchEl = document.getElementById('search');
   const resultsEl = document.getElementById('results');
+  const themeToggleEl = document.getElementById('theme-toggle');
   let selectedIndex = 0;
   let matches = [];
+
+  const THEME_KEY = 'SMART_CONTEXT_LAUNCHER_THEME';
+
+  function applyTheme(theme) {
+    const safeTheme = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', safeTheme);
+    try {
+      window.localStorage.setItem(THEME_KEY, safeTheme);
+    } catch (_) {}
+    if (themeToggleEl) {
+      const labelSpan = themeToggleEl.querySelector('.theme-toggle-label');
+      const iconSpan = themeToggleEl.querySelector('span');
+      if (labelSpan) labelSpan.textContent = safeTheme === 'dark' ? 'Light' : 'Dark';
+      if (iconSpan) iconSpan.textContent = safeTheme === 'dark' ? '☀' : '☾';
+    }
+  }
+
+  (function initTheme() {
+    let stored = null;
+    try {
+      stored = window.localStorage.getItem(THEME_KEY);
+    } catch (_) {}
+    const initial = stored === 'dark' || stored === 'light' ? stored : 'light';
+    applyTheme(initial);
+    if (themeToggleEl) {
+      themeToggleEl.addEventListener('click', function () {
+        const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+      });
+    }
+  })();
 
   function sortByCategory(flows) {
     const order = {};
@@ -103,6 +135,7 @@
       for (const item of byCat[cat]) {
         const flow = item.flow;
         const visibleIndex = visibleItems.indexOf(item);
+        if (visibleIndex === -1) continue;
         const isSelected = visibleIndex === selectedIndex;
         const isResume = flow.isResume === true;
         const isFav = !isResume && favoriteCommandKeys.indexOf(flow.command) >= 0;
